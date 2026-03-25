@@ -1,0 +1,416 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── CSS Variables — Dark (default) ── */
+:root {
+  --font-syne: 'Syne', sans-serif;
+  --font-dm-sans: 'DM Sans', sans-serif;
+
+  --color-bg: #050505;
+  --color-surface: #0F0F10;
+  --color-surface2: #161618;
+  --color-elevated: #1C1C1F;
+  --color-text-primary: #E6E6E6;
+  --color-text-muted: #A1A1AA;
+  --color-text-dim: #505057;
+  --color-border: rgba(255,255,255,0.06);
+  --color-border-hover: rgba(255,255,255,0.12);
+  --color-card-bg: rgba(255,255,255,0.032);
+  --color-sidebar-bg: rgba(15,15,16,0.95);
+  --color-input-bg: rgba(255,255,255,0.04);
+  --color-input-border: rgba(255,255,255,0.09);
+  --color-scrollbar: rgba(255,255,255,0.08);
+}
+
+/* ── CSS Variables — Light ── */
+.light {
+  --color-bg: #f4f4f8;
+  --color-surface: #ffffff;
+  --color-surface2: #f0f0f5;
+  --color-elevated: #e8e8f0;
+  --color-text-primary: #0f0f14;
+  --color-text-muted: #4b5563;
+  --color-text-dim: #9ca3af;
+  --color-border: rgba(0,0,0,0.08);
+  --color-border-hover: rgba(0,0,0,0.14);
+  --color-card-bg: rgba(255,255,255,0.9);
+  --color-sidebar-bg: rgba(255,255,255,0.97);
+  --color-input-bg: rgba(0,0,0,0.04);
+  --color-input-border: rgba(0,0,0,0.12);
+  --color-scrollbar: rgba(0,0,0,0.12);
+}
+
+/* ── Scrollbar ── */
+/* ── Scrollbar none ── */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ── Smooth scroll ── */
+html { scroll-behavior: smooth; }
+
+/* ── Base body ── */
+body {
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-dm-sans);
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* ── Sidebar light mode ── */
+.light aside {
+  background: var(--color-sidebar-bg) !important;
+  border-color: var(--color-border) !important;
+}
+
+/* ── Main content area ── */
+.light main {
+  background: var(--color-bg);
+}
+
+/* ── Cards light mode — override inline dark styles ── */
+.light [style*="background: rgba(255, 255, 255, 0.032)"],
+.light [style*="background:rgba(255,255,255,0.032)"],
+.light [style*="background: rgba(255,255,255,0.032)"] {
+  background: var(--color-card-bg) !important;
+  border-color: var(--color-border) !important;
+}
+
+.light [style*="background: #0d0d12"],
+.light [style*="background:#0d0d12"] {
+  background: #ffffff !important;
+  border-color: rgba(0,0,0,0.08) !important;
+}
+
+.light [style*="background: #0F0F10"],
+.light [style*="background:#0F0F10"],
+.light [style*="background: #0f0f10"] {
+  background: #ffffff !important;
+}
+
+.light [style*="background: rgba(15,15,16"],
+.light [style*="background:rgba(15,15,16"] {
+  background: rgba(255,255,255,0.97) !important;
+}
+
+/* ── Text color overrides for light mode ── */
+.light [style*="color: #fff"],
+.light [style*="color: #ffffff"],
+.light [style*="color:#fff"] {
+  color: #0f0f14 !important;
+}
+
+.light [style*="color: rgba(230,230,230,0.5)"],
+.light [style*="color:rgba(230,230,230,0.5)"] {
+  color: rgba(15,15,20,0.55) !important;
+}
+
+.light [style*="color: rgba(230,230,230,0.4)"],
+.light [style*="color:rgba(230,230,230,0.4)"] {
+  color: rgba(15,15,20,0.45) !important;
+}
+
+.light [style*="color: rgba(230,230,230,0.3)"],
+.light [style*="color:rgba(230,230,230,0.3)"] {
+  color: rgba(15,15,20,0.35) !important;
+}
+
+.light [style*="color: rgba(230,230,230,0.35)"],
+.light [style*="color:rgba(230,230,230,0.35)"] {
+  color: rgba(15,15,20,0.4) !important;
+}
+
+.light [style*="color: rgba(230,230,230,0.38)"],
+.light [style*="color:rgba(230,230,230,0.38)"] {
+  color: rgba(15,15,20,0.45) !important;
+}
+
+.light [style*="color: rgba(230,230,230,0.45)"],
+.light [style*="color:rgba(230,230,230,0.45)"] {
+  color: rgba(15,15,20,0.5) !important;
+}
+
+/* ── Input light mode ── */
+.light input, .light textarea {
+  background: var(--color-input-bg) !important;
+  border-color: var(--color-input-border) !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* ── Dropdown light mode ── */
+.light [style*="background: rgba(15,15,16,0.98)"],
+.light [style*="background:rgba(15,15,16,0.98)"] {
+  background: rgba(255,255,255,0.98) !important;
+  border-color: rgba(0,0,0,0.1) !important;
+}
+
+/* ── Grid texture ── */
+.grid-texture {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.016) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.016) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.light .grid-texture {
+  background-image:
+    linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ── Ambient gradients ── */
+.ambient-purple {
+  background: radial-gradient(ellipse, rgba(99,91,255,0.10) 0%, transparent 70%);
+}
+.ambient-blue {
+  background: radial-gradient(ellipse, rgba(63,208,255,0.06) 0%, transparent 70%);
+}
+.light .ambient-purple {
+  background: radial-gradient(ellipse, rgba(99,91,255,0.06) 0%, transparent 70%);
+}
+.light .ambient-blue {
+  background: radial-gradient(ellipse, rgba(63,208,255,0.04) 0%, transparent 70%);
+}
+
+/* ── Gradient utilities ── */
+@layer utilities {
+  .text-gradient-primary {
+    background: linear-gradient(135deg, #635BFF, #3FD0FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .text-gradient-hero {
+    background: linear-gradient(135deg, #fff 0%, #635BFF 50%, #3FD0FF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .light .text-gradient-hero {
+    background: linear-gradient(135deg, #0f0f14 0%, #635BFF 50%, #3FD0FF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .border-hairline {
+    border-color: var(--color-border);
+  }
+  .border-hairline-hover:hover {
+    border-color: var(--color-border-hover);
+  }
+  .bg-glass {
+    background: var(--color-card-bg);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+}
+
+/* ── Scroll reveal ── */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.scroll-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.scroll-reveal:nth-child(2) { transition-delay: 0.1s; }
+.scroll-reveal:nth-child(3) { transition-delay: 0.2s; }
+.scroll-reveal:nth-child(4) { transition-delay: 0.3s; }
+.scroll-reveal:nth-child(5) { transition-delay: 0.4s; }
+.scroll-reveal:nth-child(6) { transition-delay: 0.5s; }
+
+/* ── Universal light mode text fix ── */
+.light * {
+  border-color: inherit;
+}
+
+/* Force all white text to dark in light mode */
+.light h1, .light h2, .light h3, .light h4, .light h5, .light h6 {
+  color: #0f0f14 !important;
+}
+
+.light p {
+  color: #374151 !important;
+}
+
+.light span {
+  color: inherit;
+}
+
+.light div {
+  color: inherit;
+}
+
+/* Override all inline white colors */
+.light [style*="color: #fff"],
+.light [style*="color: #ffffff"],
+.light [style*="color: white"],
+.light [style*="color:#fff"],
+.light [style*="color:#ffffff"] {
+  color: #0f0f14 !important;
+}
+
+/* Override all dark backgrounds */
+.light [style*="background: #050505"],
+.light [style*="background:#050505"],
+.light [style*="background: #0d0d12"],
+.light [style*="background:#0d0d12"],
+.light [style*="background: #0f0f10"],
+.light [style*="background:#0f0f10"],
+.light [style*="background: #06060a"],
+.light [style*="background:#06060a"],
+.light [style*="background: #111113"],
+.light [style*="background:#111113"],
+.light [style*="background: #0F0F10"],
+.light [style*="background:#0F0F10"] {
+  background: #ffffff !important;
+  color: #0f0f14 !important;
+}
+
+/* Override dark rgba backgrounds */
+.light [style*="background: rgba(13,13,18"],
+.light [style*="background:rgba(13,13,18"],
+.light [style*="background: rgba(15,15,16"],
+.light [style*="background:rgba(15,15,16"],
+.light [style*="background: rgba(5,5,5"],
+.light [style*="background:rgba(5,5,5"],
+.light [style*="background: rgba(6,6,10"],
+.light [style*="background:rgba(6,6,10"] {
+  background: rgba(255,255,255,0.95) !important;
+}
+
+/* Cards */
+.light [style*="background: rgba(255, 255, 255, 0.03"],
+.light [style*="background: rgba(255,255,255,0.03"],
+.light [style*="background:rgba(255,255,255,0.03"] {
+  background: rgba(255,255,255,0.95) !important;
+  border-color: rgba(0,0,0,0.08) !important;
+}
+
+/* Override all muted/dim white text */
+.light [style*="color: rgba(230,230,230"],
+.light [style*="color:rgba(230,230,230"] {
+  color: rgba(30,30,40,0.65) !important;
+}
+
+.light [style*="color: rgba(255,255,255"],
+.light [style*="color:rgba(255,255,255"] {
+  color: rgba(15,15,20,0.7) !important;
+}
+
+/* Border overrides */
+.light [style*="border: 1px solid rgba(255,255,255"],
+.light [style*="border:1px solid rgba(255,255,255"] {
+  border-color: rgba(0,0,0,0.1) !important;
+}
+
+.light [style*="border-color: rgba(255,255,255"],
+.light [style*="border-color:rgba(255,255,255"] {
+  border-color: rgba(0,0,0,0.1) !important;
+}
+
+/* Italic/muted text */
+.light [style*="font-style: italic"],
+.light [style*="font-style:italic"] {
+  color: rgba(30,30,40,0.5) !important;
+}
+
+/* Box shadow fix */
+.light [style*="box-shadow: 0 24px 64px rgba(0,0,0"],
+.light [style*="box-shadow:0 24px 64px rgba(0,0,0"] {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08) !important;
+}
+
+/* Input fields */
+.light input,
+.light textarea,
+.light select {
+  background: rgba(0,0,0,0.04) !important;
+  border-color: rgba(0,0,0,0.12) !important;
+  color: #0f0f14 !important;
+}
+
+.light input::placeholder,
+.light textarea::placeholder {
+  color: rgba(15,15,20,0.35) !important;
+}
+
+/* Sidebar dropdown */
+.light [style*="background: rgba(15,15,16,0.98)"],
+.light [style*="background:rgba(15,15,16,0.98)"] {
+  background: rgba(255,255,255,0.99) !important;
+  border-color: rgba(0,0,0,0.1) !important;
+}
+
+/* Section headings with inline white color */
+.light [class*="text-text-primary"] {
+  color: #0f0f14 !important;
+}
+.light [class*="text-text-muted"] {
+  color: #4b5563 !important;
+}
+.light [class*="text-text-dim"] {
+  color: #9ca3af !important;
+}
+.light [class*="bg-bg"] {
+  background: #f4f4f8 !important;
+}
+.light [class*="bg-surface"] {
+  background: #ffffff !important;
+}
+/* ── Landing Nav Light Mode ── */
+.light nav {
+  background: rgba(244,244,248,0.85) !important;
+  border-color: rgba(0,0,0,0.08) !important;
+}
+
+.light nav .text-text-muted {
+  color: #4b5563 !important;
+}
+
+.light nav .text-text-primary {
+  color: #0f0f14 !important;
+}
+
+/* Logo text in nav */
+.light nav .font-display {
+  color: #0f0f14 !important;
+}
+
+/* ── Skill tags ── */
+.skill-tag {
+  background: rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.1);
+  color: #374151;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 11.5px;
+  font-weight: 400;
+}
+.skill-tag-shared {
+  background: rgba(99,91,255,0.14);
+  border: 1px solid rgba(99,91,255,0.3);
+  color: #635BFF;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 11.5px;
+  font-weight: 500;
+}
+.dark .skill-tag {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.07);
+  color: rgba(230,230,230,0.55);
+}
+.dark .skill-tag-shared {
+  background: rgba(99,91,255,0.14);
+  border: 1px solid rgba(99,91,255,0.3);
+  color: #a89fff;
+}
