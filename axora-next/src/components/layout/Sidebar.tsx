@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { useTheme } from "next-themes";
 import { NAV_ITEMS } from "@/lib/data";
-import { clsx } from "clsx";
 import { supabase } from "@/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 
@@ -73,7 +72,7 @@ const THEMES = [
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const { fullName, userEmail } = useAuth();
   const [role, setRole] = useState<string | null>(null);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -119,303 +118,357 @@ export function Sidebar() {
 
   const displayName = fullName ?? (userEmail ? userEmail.split("@")[0] : "Loading...");
 
-  // ── Resolved theme for conditional inline styles ──
-  const isDark = !mounted || resolvedTheme === "dark";
-
-  const sidebarBg    = isDark ? "rgba(15,15,16,0.95)"  : "rgba(255,255,255,0.97)";
-  const borderColor  = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.08)";
-  const dropdownBg   = isDark ? "rgba(15,15,16,0.98)"  : "rgba(255,255,255,0.99)";
-  const dropdownBorder = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)";
-  const dropdownShadow = isDark
-    ? "0 -8px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)"
-    : "0 -8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04)";
-  const textPrimary  = isDark ? "#fff"                  : "#111";
-  const textMuted    = isDark ? "rgba(230,230,230,0.4)" : "rgba(0,0,0,0.4)";
-  const textSub      = isDark ? "rgba(230,230,230,0.6)" : "rgba(0,0,0,0.55)";
-  const hoverBg      = isDark ? "rgba(255,255,255,0.05)": "rgba(0,0,0,0.05)";
-  const dividerColor = isDark ? "rgba(255,255,255,0.06)": "rgba(0,0,0,0.07)";
-  const themeBtnBorder = isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.1)";
-  const themeBtnBg   = isDark ? "rgba(255,255,255,0.03)"  : "rgba(0,0,0,0.03)";
-
   return (
-    <aside
-      style={{
-        background: sidebarBg,
-        borderRight: `1px solid ${borderColor}`,
-      }}
-      className="fixed top-0 left-0 h-full w-[220px] flex flex-col px-3 py-5 z-50 backdrop-blur-2xl"
-    >
-      {/* Logo */}
+    <>
+      {/* ── Sidebar styles using CSS variables only ── */}
+      <style>{`
+        .sidebar-root {
+          background: var(--color-sidebar-bg);
+          border-right: 1px solid var(--color-border);
+        }
+        .sidebar-logo-divider {
+          border-bottom: 1px solid var(--color-border);
+        }
+        .sidebar-section-label {
+          color: var(--color-text-dim);
+        }
+        .sidebar-nav-item {
+          color: var(--color-text-muted);
+          background: transparent;
+          transition: background 0.15s ease, color 0.15s ease;
+        }
+        .sidebar-nav-item:hover {
+          background: var(--color-accent-dim);
+          color: var(--color-text-primary);
+        }
+        .sidebar-nav-item.active {
+          background: var(--color-accent-dim);
+          color: var(--color-accent);
+          font-weight: 500;
+        }
+        .sidebar-nav-item.active svg {
+          color: var(--color-accent);
+        }
+        .sidebar-recent-item {
+          color: var(--color-text-muted);
+          transition: background 0.15s ease, color 0.15s ease;
+        }
+        .sidebar-recent-item:hover {
+          background: var(--color-accent-dim);
+          color: var(--color-text-primary);
+        }
+        .sidebar-user-row {
+          color: var(--color-text-primary);
+          transition: background 0.15s ease;
+        }
+        .sidebar-user-row:hover {
+          background: var(--color-accent-dim);
+        }
+        .sidebar-user-border {
+          border-top: 1px solid var(--color-border);
+        }
+        /* Dropdown */
+        .sidebar-dropdown {
+          background: var(--color-elevated);
+          border: 1px solid var(--color-border-hover);
+          box-shadow: 0 -8px 32px rgba(0,0,0,0.3), 0 0 0 1px var(--color-border);
+        }
+        .sidebar-dropdown-divider {
+          background: var(--color-border);
+        }
+        .sidebar-dropdown-header {
+          border-bottom: 1px solid var(--color-border);
+        }
+        .sidebar-dropdown-name {
+          color: var(--color-text-primary);
+          font-size: 13px;
+          font-weight: 600;
+        }
+        .sidebar-dropdown-email {
+          color: var(--color-text-muted);
+          font-size: 11px;
+        }
+        .sidebar-dropdown-role {
+          color: var(--color-accent);
+          background: var(--color-accent-dim);
+          border: 1px solid var(--color-border-accent);
+          border-radius: 4px;
+          padding: 1px 6px;
+          font-size: 9px;
+          font-weight: 600;
+          letter-spacing: 0.04em;
+          display: inline-block;
+          margin-top: 3px;
+        }
+        .sidebar-dropdown-link {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 10px;
+          border-radius: 8px;
+          color: var(--color-text-muted);
+          font-size: 13px;
+          text-decoration: none;
+          transition: background 0.15s, color 0.15s;
+          margin-bottom: 2px;
+        }
+        .sidebar-dropdown-link:hover {
+          background: var(--color-accent-dim);
+          color: var(--color-text-primary);
+        }
+        .sidebar-dropdown-logout {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 10px;
+          border-radius: 8px;
+          color: rgba(239,68,68,0.8);
+          font-size: 13px;
+          cursor: pointer;
+          transition: background 0.15s, color 0.15s;
+        }
+        .sidebar-dropdown-logout:hover {
+          background: rgba(239,68,68,0.08);
+          color: #ef4444;
+        }
+        /* Theme switcher buttons */
+        .theme-btn {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 4px;
+          padding: 7px 4px;
+          border-radius: 8px;
+          border: 1px solid var(--color-border);
+          background: var(--color-surface);
+          color: var(--color-text-muted);
+          font-size: 10px;
+          font-weight: 400;
+          cursor: pointer;
+          transition: all 0.15s;
+          font-family: inherit;
+        }
+        .theme-btn:hover {
+          border-color: var(--color-border-hover);
+          color: var(--color-text-primary);
+        }
+        .theme-btn.active {
+          border-color: var(--color-accent);
+          background: var(--color-accent-dim);
+          color: var(--color-accent);
+          font-weight: 600;
+        }
+        .theme-label {
+          padding: 6px 10px;
+          font-size: 10px;
+          font-weight: 600;
+          color: var(--color-text-dim);
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+        /* Avatar */
+        .sidebar-avatar {
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 12px;
+          font-weight: 700;
+          color: #022C22;
+          flex-shrink: 0;
+        }
+        .sidebar-avatar-lg {
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 15px;
+          font-weight: 700;
+          color: #022C22;
+          flex-shrink: 0;
+        }
+        /* Badge */
+        .sidebar-badge {
+          background: var(--color-accent);
+          color: #022C22;
+          font-size: 0.7rem;
+          padding: 1px 6px;
+          border-radius: 999px;
+          font-weight: 700;
+        }
+         /* Dark theme (default): white text is visible as-is */
+.axora-text-logo {
+  filter: none;
+}
 
-<div
-  style={{ borderBottom: `1px solid ${borderColor}` }}
-  className="flex items-center px-[10px] pb-5 mb-2"
->
+/* Light theme: invert white → dark so it's readable */
+.light .axora-text-logo {
+  filter: brightness(0) saturate(100%);
+}
+}
+      `}</style>
+
+      <aside className="sidebar-root fixed top-0 left-0 h-full w-[220px] flex flex-col px-3 py-5 z-50 backdrop-blur-2xl">
+
+        {/* ── Logo ── */}
+        <div className="sidebar-logo-divider flex items-center px-[10px] pb-5 mb-2">
   <Link href="/" prefetch={true}>
- <img
-  src="/axora-logo.png"
-  alt="Axora"
-  className="h-9 w-auto object-contain"
-/>
+ {/* Logo: icon always keeps color, text turns dark on light theme */}
+<div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+  <Link href="/">
+  <img
+    src="/axora-logo-final.png"
+    alt="Axora"
+    className="axora-logo"
+    style={{ height: "32px", width: "auto", objectFit: "contain" }}
+  />
+</Link>
+</div>
   </Link>
 </div>
-      {/* Main nav */}
-      {/* Main nav */}
-<div className="mt-5 overflow-y-auto flex-1 scrollbar-none">
-        <p className="text-[0.7rem] font-medium uppercase tracking-[0.08em] px-[10px] mb-[6px]" style={{ color: textMuted }}>
-          Workspace
-        </p>
-        {NAV_ITEMS.map((item) => {
-          const isActive = pathname.startsWith(item.href);
-          return (
-            <Link key={item.href} href={item.href} prefetch={true}>
-              <div
-                className="flex items-center gap-[10px] px-[10px] py-[9px] rounded-[10px] text-sm font-normal mb-[2px] transition-all duration-200 cursor-pointer"
-                style={{
-                  background: isActive ? "rgba(99,91,255,0.14)" : "transparent",
-                  color: isActive ? "#a89fff" : textSub,
-                }}
-                onMouseEnter={e => {
-                  if (!isActive) {
-                    (e.currentTarget as HTMLDivElement).style.background = hoverBg;
-                    (e.currentTarget as HTMLDivElement).style.color = textPrimary;
-                  }
-                }}
-                onMouseLeave={e => {
-                  if (!isActive) {
-                    (e.currentTarget as HTMLDivElement).style.background = "transparent";
-                    (e.currentTarget as HTMLDivElement).style.color = textSub;
-                  }
-                }}
-              >
-                {icons[item.icon]}
-                <span className="flex-1">{item.label}</span>
-                {item.badge && (
-                  <span className="ml-auto bg-primary text-white text-[0.7rem] px-[6px] py-[1px] rounded-full font-medium">
-                    {item.badge}
-                  </span>
-                )}
-              </div>
-            </Link>
-          );
-        })}
-      </div>
 
-      {/* Recents */}
-      <div className="mt-5">
-        <p className="text-[0.7rem] font-medium uppercase tracking-[0.08em] px-[10px] mb-[6px]" style={{ color: textMuted }}>
-          Recents
-        </p>
-        {["Axora v2 Launch", "Design System"].map((item) => (
-          <div
-            key={item}
-            className="flex items-center gap-[10px] px-[10px] py-[9px] rounded-[10px] text-[0.82rem] transition-all duration-200 cursor-pointer mb-[2px]"
-            style={{ color: textSub }}
-            onMouseEnter={e => {
-              (e.currentTarget as HTMLDivElement).style.background = hoverBg;
-              (e.currentTarget as HTMLDivElement).style.color = textPrimary;
-            }}
-            onMouseLeave={e => {
-              (e.currentTarget as HTMLDivElement).style.background = "transparent";
-              (e.currentTarget as HTMLDivElement).style.color = textSub;
-            }}
-          >
-            {icons.clock}
-            {item}
-          </div>
-        ))}
-      </div>
-
-      {/* User section with dropdown */}
-      <div
-        className="mt-auto pt-4"
-        style={{ borderTop: `1px solid ${borderColor}` }}
-        ref={dropdownRef}
-      >
-        {/* Dropdown */}
-        {showDropdown && (
-          <div style={{
-            position: "absolute",
-            bottom: "70px",
-            left: "12px",
-            right: "12px",
-            background: dropdownBg,
-            border: `1px solid ${dropdownBorder}`,
-            borderRadius: "14px",
-            padding: "14px",
-            boxShadow: dropdownShadow,
-            backdropFilter: "blur(20px)",
-            zIndex: 100,
-          }}>
-            {/* User info */}
-            <div style={{
-              display: "flex", alignItems: "center", gap: "10px",
-              marginBottom: "12px", paddingBottom: "12px",
-              borderBottom: `1px solid ${dividerColor}`,
-            }}>
-              <div style={{
-                width: "38px", height: "38px", borderRadius: "50%",
-                background: "linear-gradient(135deg, #635BFF, #3B82F6)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: "15px", fontWeight: 700, color: "#fff", flexShrink: 0,
-                boxShadow: "0 0 14px rgba(99,91,255,0.4)",
-              }}>
-                {initials}
-              </div>
-              <div style={{ overflow: "hidden" }}>
-                <div style={{ fontSize: "13px", fontWeight: 600, color: textPrimary, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                  {displayName}
+        {/* ── Main nav ── */}
+        <div className="mt-5 overflow-y-auto flex-1 scrollbar-none">
+          <p className="sidebar-section-label text-[0.7rem] font-medium uppercase tracking-[0.08em] px-[10px] mb-[6px]">
+            Workspace
+          </p>
+          {NAV_ITEMS.map((item) => {
+            const isActive = pathname.startsWith(item.href);
+            return (
+              <Link key={item.href} href={item.href} prefetch={true}>
+                <div className={`sidebar-nav-item flex items-center gap-[10px] px-[10px] py-[9px] rounded-[10px] text-sm mb-[2px] cursor-pointer${isActive ? " active" : ""}`}>
+                  {icons[item.icon]}
+                  <span className="flex-1">{item.label}</span>
+                  {item.badge && (
+                    <span className="sidebar-badge ml-auto">{item.badge}</span>
+                  )}
                 </div>
-                <div style={{ fontSize: "11px", color: textMuted, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                  {userEmail}
-                </div>
-                {role && (
-                  <div style={{
-                    display: "inline-block", marginTop: "3px",
-                    fontSize: "9px", fontWeight: 600,
-                    color: "rgba(99,91,255,0.9)",
-                    background: "rgba(99,91,255,0.12)",
-                    border: "1px solid rgba(99,91,255,0.25)",
-                    borderRadius: "4px", padding: "1px 6px",
-                    letterSpacing: "0.04em",
-                  }}>
-                    {role}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* View Profile */}
-            <Link
-              href="/profile"
-              prefetch={true}
-              onClick={() => setShowDropdown(false)}
-              style={{
-                display: "flex", alignItems: "center", gap: "8px",
-                padding: "8px 10px", borderRadius: "8px",
-                color: textSub, fontSize: "13px",
-                textDecoration: "none", marginBottom: "2px",
-                transition: "all 0.15s",
-              }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLAnchorElement).style.background = hoverBg;
-                (e.currentTarget as HTMLAnchorElement).style.color = textPrimary;
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
-                (e.currentTarget as HTMLAnchorElement).style.color = textSub;
-              }}
-            >
-              <svg fill="none" stroke="currentColor" strokeWidth={1.7} viewBox="0 0 24 24" style={{ width: "14px", height: "14px" }}>
-                <circle cx="12" cy="8" r="4"/><path d="M4 20v-1a8 8 0 0 1 16 0v1"/>
-              </svg>
-              View Profile
-            </Link>
-
-            {/* Theme switcher */}
-            <div style={{ marginBottom: "8px" }}>
-              <div style={{
-                padding: "6px 10px 6px",
-                fontSize: "10px", fontWeight: 600,
-                color: textMuted,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-              }}>
-                Theme
-              </div>
-              <div style={{ display: "flex", gap: "4px", padding: "0 2px" }}>
-                {mounted && THEMES.map(t => (
-                  <button
-                    key={t.value}
-                    onClick={() => setTheme(t.value)}
-                    style={{
-                      flex: 1,
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      gap: "4px",
-                      padding: "7px 4px",
-                      borderRadius: "8px",
-                      border: theme === t.value
-                        ? "1px solid rgba(99,91,255,0.5)"
-                        : `1px solid ${themeBtnBorder}`,
-                      background: theme === t.value
-                        ? "rgba(99,91,255,0.14)"
-                        : themeBtnBg,
-                      color: theme === t.value ? "#a89fff" : textSub,
-                      fontSize: "10px",
-                      fontWeight: theme === t.value ? 600 : 400,
-                      cursor: "pointer",
-                      transition: "all 0.15s",
-                      fontFamily: "inherit",
-                    }}
-                  >
-                    {t.icon}
-                    {t.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div style={{ height: "1px", background: dividerColor, marginBottom: "8px" }} />
-
-            {/* Logout */}
-            <div
-              onClick={handleLogout}
-              style={{
-                display: "flex", alignItems: "center", gap: "8px",
-                padding: "8px 10px", borderRadius: "8px",
-                color: "rgba(239,68,68,0.8)", fontSize: "13px",
-                cursor: "pointer", transition: "all 0.15s",
-              }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLDivElement).style.background = "rgba(239,68,68,0.08)";
-                (e.currentTarget as HTMLDivElement).style.color = "#ef4444";
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLDivElement).style.background = "transparent";
-                (e.currentTarget as HTMLDivElement).style.color = "rgba(239,68,68,0.8)";
-              }}
-            >
-              <svg fill="none" stroke="currentColor" strokeWidth={1.7} viewBox="0 0 24 24" style={{ width: "14px", height: "14px" }}>
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
-              </svg>
-              Sign out
-            </div>
-          </div>
-        )}
-
-        {/* User row */}
-        <div
-          onClick={() => setShowDropdown(v => !v)}
-          className="flex items-center gap-[10px] px-[10px] py-2 rounded-[10px] transition-all duration-200 cursor-pointer"
-          style={{ color: textPrimary }}
-          onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = hoverBg}
-          onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.background = "transparent"}
-        >
-          <div className="w-[30px] h-[30px] rounded-full bg-gradient-primary flex items-center justify-center text-xs font-semibold text-white flex-shrink-0">
-            {initials}
-          </div>
-          <div>
-            <div className="text-[0.85rem] font-medium" style={{ color: textPrimary }}>
-              {displayName}
-            </div>
-            <div className="text-[0.75rem]" style={{ color: textMuted }}>Pro plan</div>
-          </div>
-          <svg
-            className="ml-auto w-3 h-3"
-            fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"
-            style={{
-              color: textMuted,
-              transform: showDropdown ? "rotate(180deg)" : "rotate(0deg)",
-              transition: "transform 0.2s",
-            }}
-          >
-            <polyline points="6 9 12 15 18 9"/>
-          </svg>
+              </Link>
+            );
+          })}
         </div>
-      </div>
-    </aside>
+
+        {/* ── Recents ── */}
+        <div className="mt-5">
+          <p className="sidebar-section-label text-[0.7rem] font-medium uppercase tracking-[0.08em] px-[10px] mb-[6px]">
+            Recents
+          </p>
+          {["Axora v2 Launch", "Design System"].map((item) => (
+            <div
+              key={item}
+              className="sidebar-recent-item flex items-center gap-[10px] px-[10px] py-[9px] rounded-[10px] text-[0.82rem] cursor-pointer mb-[2px]"
+            >
+              {icons.clock}
+              {item}
+            </div>
+          ))}
+        </div>
+
+        {/* ── User section ── */}
+        <div className="sidebar-user-border mt-auto pt-4" ref={dropdownRef}>
+
+          {/* Dropdown */}
+          {showDropdown && (
+            <div
+              className="sidebar-dropdown"
+              style={{
+                position: "absolute",
+                bottom: "70px",
+                left: "12px",
+                right: "12px",
+                borderRadius: "14px",
+                padding: "14px",
+                backdropFilter: "blur(20px)",
+                zIndex: 100,
+              }}
+            >
+              {/* User info */}
+              <div className="sidebar-dropdown-header" style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px", paddingBottom: "12px" }}>
+                <div className="sidebar-avatar-lg">{initials}</div>
+                <div style={{ overflow: "hidden" }}>
+                  <div className="sidebar-dropdown-name" style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {displayName}
+                  </div>
+                  <div className="sidebar-dropdown-email" style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {userEmail}
+                  </div>
+                  {role && <span className="sidebar-dropdown-role">{role}</span>}
+                </div>
+              </div>
+
+              {/* View Profile */}
+              <Link href="/profile" prefetch={true} onClick={() => setShowDropdown(false)} className="sidebar-dropdown-link">
+                <svg fill="none" stroke="currentColor" strokeWidth={1.7} viewBox="0 0 24 24" style={{ width: 14, height: 14 }}>
+                  <circle cx="12" cy="8" r="4"/><path d="M4 20v-1a8 8 0 0 1 16 0v1"/>
+                </svg>
+                View Profile
+              </Link>
+
+              {/* Theme switcher */}
+              <div>
+                <div className="theme-label">Theme</div>
+                <div style={{ display: "flex", gap: "4px", padding: "0 2px" }}>
+                  {mounted && THEMES.map(t => (
+                    <button
+                      key={t.value}
+                      onClick={() => setTheme(t.value)}
+                      className={`theme-btn${theme === t.value ? " active" : ""}`}
+                    >
+                      {t.icon}
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div className="sidebar-dropdown-divider" style={{ height: "1px", margin: "10px 0" }} />
+
+              {/* Logout */}
+              <div className="sidebar-dropdown-logout" onClick={handleLogout}>
+                <svg fill="none" stroke="currentColor" strokeWidth={1.7} viewBox="0 0 24 24" style={{ width: 14, height: 14 }}>
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <polyline points="16 17 21 12 16 7"/>
+                  <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Sign out
+              </div>
+            </div>
+          )}
+
+          {/* User row */}
+          <div
+            onClick={() => setShowDropdown(v => !v)}
+            className="sidebar-user-row flex items-center gap-[10px] px-[10px] py-2 rounded-[10px] cursor-pointer"
+          >
+            <div className="sidebar-avatar">{initials}</div>
+            <div>
+              <div className="text-[0.85rem] font-medium" style={{ color: "var(--color-text-primary)" }}>
+                {displayName}
+              </div>
+              <div className="text-[0.75rem]" style={{ color: "var(--color-text-dim)" }}>Pro plan</div>
+            </div>
+            <svg
+              className="ml-auto w-3 h-3"
+              fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"
+              style={{
+                color: "var(--color-text-dim)",
+                transform: showDropdown ? "rotate(180deg)" : "rotate(0deg)",
+                transition: "transform 0.2s",
+              }}
+            >
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+        </div>
+      </aside>
+    </>
   );
 }

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/supabase/client";
 import { MatchCard } from "@/components/dashboard/MatchCard";
-import { Profile } from "@/lib/matching";
+import { Profile, calculateMatchScore } from "@/lib/matching";
 
 export default function MatchPage() {
   const [matches, setMatches] = useState<Profile[]>([]);
@@ -15,26 +15,38 @@ export default function MatchPage() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      // Get current user skills for highlighting
+      // Get current user's profile
       const { data: myProfile } = await supabase
         .from("profiles")
-        .select("skills")
+        .select("*")
         .eq("id", session.user.id)
         .single();
 
-      setCurrentUserSkills(myProfile?.skills ?? []);
+      if (!myProfile) { setLoading(false); return; }
 
-      // Call FastAPI AI matching endpoint
-      const res = await fetch("http://localhost:8000/match", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: session.user.id }),
+      setCurrentUserSkills(myProfile.skills ?? []);
+
+      // Get all other profiles
+      const { data: allProfiles } = await supabase
+        .from("profiles")
+        .select("*")
+        .neq("id", session.user.id);
+
+      if (!allProfiles || allProfiles.length === 0) { setLoading(false); return; }
+
+      // Score and sort them
+      const scored: Profile[] = allProfiles.map((profile) => {
+        const score = calculateMatchScore(myProfile.skills ?? [], profile.skills ?? []);
+        return {
+          ...profile,
+          match_score: score,
+          reason: `${score}% skill compatibility`,
+        };
       });
 
-      if (!res.ok) { setLoading(false); return; }
+      scored.sort((a, b) => (b.match_score ?? 0) - (a.match_score ?? 0));
 
-      const data = await res.json();
-      setMatches(data);
+      setMatches(scored);
       setLoading(false);
     };
 

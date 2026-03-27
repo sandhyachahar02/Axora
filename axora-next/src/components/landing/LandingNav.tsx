@@ -23,11 +23,15 @@ export function LandingNav() {
       }`}
     >
       {/* Logo */}
-    <img
-  src="/axora-logo.png"
-  alt="Axora"
-  className="h-8 w-auto object-contain"
-/>
+    {/* Logo: icon always keeps color, text turns dark on light theme */}
+<Link href="/">
+  <img
+    src="/axora-logo-final.png"
+    alt="Axora"
+    className="axora-logo"
+    style={{ height: "32px", width: "auto", objectFit: "contain" }}
+  />
+</Link>
       {/* Links */}
       <ul className="hidden md:flex gap-8 list-none">
         {["Features", "How it works", "Customers"].map((item) => (
@@ -62,7 +66,9 @@ export function LandingNav() {
               cursor: "pointer",
               transition: "all 0.15s",
               flexShrink: 0,
+              
             }}
+            
             onMouseEnter={e => {
               (e.currentTarget as HTMLButtonElement).style.background = "rgba(99,91,255,0.15)";
               (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(99,91,255,0.4)";

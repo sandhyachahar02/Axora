@@ -170,6 +170,15 @@ export default function LoginPage() {
         .light .footer-text { color: rgba(15,15,20,0.5); }
         .light .forgot-link { color: rgba(15,15,20,0.4); }
         .light .grid-overlay { background-image: linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px); }
+/* Dark theme (default): white text is visible as-is */
+.axora-text-logo {
+  filter: none;
+}
+
+/* Light theme: invert white → dark so it's readable */
+.light .axora-text-logo {
+  filter: brightness(0) saturate(100%);
+}
       `}</style>
 
       <div className="login-root">
@@ -180,16 +189,15 @@ export default function LoginPage() {
 
         <div className={`card-wrapper ${mounted ? "visible" : ""}`}>
           <div className="card">
-            <div className="logo-area">
-              <div className="logo-mark">
-                <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M9 2L15.5 14H2.5L9 2Z" fill="white" fillOpacity="0.92" />
-                  <path d="M9 7L12 13H6L9 7Z" fill="white" fillOpacity="0.35" />
-                </svg>
-              </div>
-              <span className="logo-name">Axora</span>
-            </div>
-
+   {/* Logo: icon always keeps color, text turns dark on light theme */}
+<Link href="/">
+  <img
+    src="/axora-logo-final.png"
+    alt="Axora"
+    className="axora-logo"
+    style={{ height: "32px", width: "auto", objectFit: "contain" }}
+  />
+</Link>
             <div className="heading-group">
               <h1 className="heading">Welcome back</h1>
               <p className="subheading">Sign in to continue to your workspace</p>

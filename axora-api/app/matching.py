@@ -105,8 +105,8 @@ def compute_match(current_user: dict, candidate: dict) -> dict:
 
     # Weighted score
     final_score = (
-        (0.4 * skill) +
-        (0.3 * complementary) +
+        (0.3 * skill) +
+        (0.4 * complementary) +
         (0.2 * interest) +
         (0.1 * experience)
     )
